@@ -1,18 +1,14 @@
+import "./FileUpload.css";
 import { parseFile } from "../utils/parseFile";
 
 const FileUpload = ({ onDataLoaded }) => {
-  const handleFileChange = (e) => {
+  const handleChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      parseFile(file, onDataLoaded);
-    }
+    if (!file) return;
+    parseFile(file, onDataLoaded);
   };
 
-  return (
-    <div style={{ marginBottom: "20px" }}>
-      <input type="file" accept=".csv,.xlsx" onChange={handleFileChange} />
-    </div>
-  );
+  return <input type="file" accept=".csv,.xlsx" onChange={handleChange} />;
 };
 
 export default FileUpload;

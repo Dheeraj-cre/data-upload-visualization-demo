@@ -1,51 +1,87 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import FileUpload from "./components/FileUpload";
-import DataTable from "./components/DataTable";
 import ChartView from "./components/ChartView";
-import ExportMock from "./components/ExportMock";
+import DataTable from "./components/DataTable";
+import "./App.css";
 
 function App() {
+  // DATA STATE
   const [data, setData] = useState([]);
 
+  // VIEW STATE
+  const [view, setView] = useState("all"); // bar | pie | table | all
+
   return (
-    <div className="container">
-      <div className="card">
-        <h1>Data Upload & Visualization Demo</h1>
-        <p>
-          Upload a CSV or Excel file to instantly preview data, generate charts,
-          and prepare content for Word export.
-        </p>
-      </div>
+    <div className="dashboard">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <h2 className="logo">Data Visu</h2>
 
-      <div className="card">
-        <h3>1. Upload Data File</h3>
-        <p>Supported formats: CSV, XLSX</p>
-        <FileUpload onDataLoaded={setData} />
-      </div>
+        <div className="upload-card">
+          <div className="upload-icon">☁️</div>
+          <h3>Upload Data</h3>
+          <p>Import your data to build custom dashboards.</p>
 
-      {data.length > 0 && (
-        <>
-          <div className="card">
-            <h3>2. Data Preview</h3>
-            <p>Showing first 10 rows from the uploaded file.</p>
-            <DataTable data={data} />
+          <FileUpload onDataLoaded={setData} />
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="main">
+        {/* Header */}
+        <header className="topbar">
+          <h1>Sample Dashboard</h1>
+
+          {/* ACTION BUTTONS */}
+          <div className="actions">
+            <button onClick={() => setView("bar")} title="Bar Chart">
+              📊
+            </button>
+            <button onClick={() => setView("pie")} title="Pie Chart">
+              🕒
+            </button>
+            <button onClick={() => setView("table")} title="Table">
+              📑
+            </button>
+            <button onClick={() => setView("all")} title="Show All">
+              ⚙️
+            </button>
           </div>
+        </header>
 
-          <div className="card">
-            <h3>3. Data Visualization</h3>
-            <p>Auto-generated charts based on numeric data.</p>
-            <ChartView data={data} />
-          </div>
+        {/* RECORD COUNT */}
+        {data.length > 0 && (
+          <p style={{ color: "#64748b", marginBottom: "12px" }}>
+            Total Records: <strong>{data.length}</strong>
+          </p>
+        )}
 
-          <div className="card">
-            <h3>4. Export to Word</h3>
-            <ExportMock />
-            <p className="footer-note">
-              Editable Word export will be implemented in the full version.
-            </p>
-          </div>
-        </>
-      )}
+        {/* Content */}
+       <div className="grid">
+  {(view === "bar" || view === "all") && (
+    <div className="card chart-card">
+      <h3>Sales by Category</h3>
+      <ChartView data={data} type="bar" />
+    </div>
+  )}
+
+  {(view === "table" || view === "all") && (
+    <div className="card table-card">
+      <h3>Sales Data</h3>
+      <DataTable data={data} />
+    </div>
+  )}
+
+  {(view === "pie" || view === "all") && (
+    <div className="card pie-card wide">
+      <h3>Revenue by Region</h3>
+      <ChartView data={data} type="pie" />
+    </div>
+  )}
+</div>
+
+       
+      </main>
     </div>
   );
 }

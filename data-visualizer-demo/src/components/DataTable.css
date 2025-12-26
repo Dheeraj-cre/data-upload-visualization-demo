@@ -1,0 +1,28 @@
+.table-wrapper {
+  max-height: 420px;        /* 👈 scrollbar height */
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table th {
+  position: sticky;
+  top: 0;
+  background: #eef2ff;
+  padding: 10px;
+  text-align: left;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.data-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
