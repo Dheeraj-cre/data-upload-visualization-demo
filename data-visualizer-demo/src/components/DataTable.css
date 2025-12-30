@@ -1,28 +1,68 @@
+/* ===============================
+   TABLE WRAPPER
+================================ */
 .table-wrapper {
-  max-height: 420px;        /* 👈 scrollbar height */
-  overflow-y: auto;
-  overflow-x: auto;
-  border-radius: 12px;
+  width: 100%;
+  overflow-x: auto;      /* horizontal scroll on small screens */
+  border-radius: 14px;
 }
 
+/* ===============================
+   TABLE BASE
+================================ */
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.data-table thead {
+  background: #f1f5f9;   /* light header */
 }
 
 .data-table th {
-  position: sticky;
-  top: 0;
-  background: #eef2ff;
-  padding: 10px;
+  padding: 10px 12px;
   text-align: left;
-  white-space: nowrap;
-  z-index: 1;
-}
-
-.data-table td {
-  padding: 10px;
+  font-weight: 600;
+  color: #111827;
   border-bottom: 1px solid #e5e7eb;
   white-space: nowrap;
+}
+
+/* ===============================
+   BODY
+================================ */
+.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+/* Zebra rows */
+.data-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+/* Hover (safe – no layout change) */
+.data-table tbody tr:hover {
+  background: #eef2ff;
+}
+
+/* ===============================
+   MOBILE OPTIMIZATION
+================================ */
+@media (max-width: 640px) {
+  .data-table {
+    font-size: 12px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 8px;
+  }
 }

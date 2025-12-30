@@ -1,10 +1,12 @@
-const ExportMock = () => {
+import "./ExportMock.css";
+
+const ExportMock = ({ docName }) => {
   return (
-    <div style={{ marginTop: "20px" }}>
-      <button disabled>
-        Export to Word (Demo)
+    <div className="export-box">
+      <button className="export-btn" disabled>
+         Export {docName || "Document"} to Word (Demo)
       </button>
-      <p style={{ fontSize: "12px", color: "#666" }}>
+      <p className="export-note">
         Full Word export will be implemented in the final version.
       </p>
     </div>

@@ -1,134 +1,228 @@
-/* =====================
-   DASHBOARD LAYOUT
-===================== */
+/* ===============================
+   RESET & BASE
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
+}
+
 .dashboard {
   display: flex;
   min-height: 100vh;
+  width: 100%;
 }
 
-/* =====================
+/* ===============================
    SIDEBAR
-===================== */
+================================ */
 .sidebar {
-  width: 260px;
+  width: 280px;
+  min-width: 260px;
   background: linear-gradient(180deg, #f8fafc, #eef2f7);
-  padding: 24px;
+  padding: 20px;
   border-right: 1px solid #e5e7eb;
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  color: #111827;
 }
 
-/* =====================
+.upload-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.upload-icon {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+.upload-card h3 {
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.upload-card p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 14px;
+}
+
+.filter-box {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-box label {
+  font-size: 13px;
+  color: #374151;
+}
+
+.filter-box select {
+  padding: 8px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+/* ===============================
    MAIN
-===================== */
+================================ */
 .main {
   flex: 1;
-  padding: 24px 32px;
+  padding: 24px;
+  min-width: 0; /*  prevents overflow */
 }
 
-/* =====================
-   HEADER
-===================== */
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .topbar h1 {
   font-size: 26px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #111827;
 }
 
-/* =====================
-   ACTION BUTTONS
-===================== */
-.actions button {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 8px 10px;
-  margin-left: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  transition: all 0.2s ease;
-}
-
-.actions button:hover {
-  background: #eef2ff;
-}
-
-.actions button:active {
-  transform: scale(0.95);
-}
-
-/* Optional: active button style */
-.actions button.active {
-  background: #4f46e5;
-  color: #fff;
-  border-color: #4f46e5;
-}
-
-/* =====================
-   GRID
-===================== */
+/* ===============================
+   GRID (AUTO-FIT LIKE SAMPLE)
+================================ */
 .grid {
   display: grid;
-  grid-template-columns: 2fr 1.2fr;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 20px;
+  align-items: start;
 }
 
-/* =====================
-   CARD BASE
-===================== */
+/* ===============================
+   CARD (AUTO-RESIZE)
+================================ */
 .card {
-  background: #fff;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-}
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
 
-/* =====================
-   CARD TYPES (IMPORTANT)
-===================== */
-
-/* Bar chart card */
-.card.chart-card {
-  min-height: 360px;
-}
-
-/* Table card */
-.card.table-card {
-  min-height: 460px;
-}
-
-/* Pie chart card */
-.card.pie-card {
-  min-height: 320px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  height: auto;
+  min-width: 0; /*  critical for grid responsiveness */
 }
 
-/* Full width */
+.card h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  flex-shrink: 0;
+}
+
+/* ===============================
+   CHART (STABLE SIZE)
+================================ */
+.chart-wrapper {
+  width: 100%;
+  height: 280px;
+  position: relative;
+}
+
+@media (max-width: 640px) {
+  .chart-wrapper {
+    height: 240px;
+  }
+}
+
+/* ===============================
+   TABLE CARD
+================================ */
+.table-card {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+.table-card table {
+  width: 100%;
+  min-width: 600px;
+}
+
+/* ===============================
+   DATA-DRIVEN GRID SPAN
+================================ */
 .wide {
   grid-column: span 2;
 }
 
-/* =====================
-   RESPONSIVE
-===================== */
+.wide-full {
+  grid-column: 1 / -1;
+}
+
+/* ===============================
+   TABLET (≤1024px)
+================================ */
 @media (max-width: 1024px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .main {
+    padding: 20px;
+  }
+
+  .wide,
+  .wide-full {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ===============================
+   MOBILE (≤640px)
+================================ */
+@media (max-width: 640px) {
+  .main {
+    padding: 16px;
+  }
+
+  .topbar h1 {
+    font-size: 22px;
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }
 
-  .wide {
+  .upload-card {
+    padding: 14px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .wide,
+  .wide-full {
     grid-column: span 1;
   }
 }

@@ -19,75 +19,85 @@ ChartJS.register(
   Legend
 );
 
-const ChartView = ({ data = [], type }) => {
-  if (!data.length) return null;
+const COLORS = ["#3B82F6", "#F59E0B", "#84CC16", "#EF4444"];
 
-  /* =========================
-     SALES BY CATEGORY (BAR)
-  ========================= */
+const ChartView = ({ data = [], type, groupBy, metric }) => {
+  if (!data.length || !groupBy || !metric) return null;
+
+  const map = {};
+  data.forEach((row) => {
+    const key = row[groupBy];
+    const value = Number(row[metric]) || 0;
+    map[key] = (map[key] || 0) + value;
+  });
+
+  const labels = Object.keys(map);
+  const values = Object.values(map);
+
+  const commonOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: false, //  stops requestAnimationFrame loop
+    plugins: {
+      legend: {
+        labels: {
+          color: "#374151",
+          font: { size: 12 },
+        },
+      },
+    },
+    scales:
+      type === "bar"
+        ? {
+            x: {
+              ticks: { color: "#6B7280" },
+              grid: { display: false },
+            },
+            y: {
+              ticks: { color: "#6B7280" },
+              grid: { color: "#E5E7EB" },
+            },
+          }
+        : {},
+  };
+
   if (type === "bar") {
-    const categoryMap = {};
-
-    data.forEach((row) => {
-      categoryMap[row.Category] =
-        (categoryMap[row.Category] || 0) + Number(row.Sales);
-    });
-
     return (
       <div className="chart-wrapper">
         <Bar
+          key={`bar-chart`}
           data={{
-            labels: Object.keys(categoryMap),
+            labels,
             datasets: [
               {
-                label: "Total Sales",
-                data: Object.values(categoryMap),
-                backgroundColor: "#4f46e5",
-                borderRadius: 8,
+                label: metric,
+                data: values,
+                backgroundColor: COLORS,
+                borderRadius: 6,
               },
             ],
           }}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-          }}
+          options={commonOptions}
         />
       </div>
     );
   }
 
-  /* =========================
-     REVENUE BY REGION (PIE)
-  ========================= */
   if (type === "pie") {
-    const regionMap = {};
-
-    data.forEach((row) => {
-      regionMap[row.Region] =
-        (regionMap[row.Region] || 0) + Number(row.Sales);
-    });
-
     return (
       <div className="chart-wrapper">
         <Pie
+          key={`pie-chart`}
           data={{
-            labels: Object.keys(regionMap),
+            labels,
             datasets: [
               {
-                data: Object.values(regionMap),
-                backgroundColor: [
-                  "#3b82f6",
-                  "#22c55e",
-                  "#f97316",
-                  "#ef4444",
-                ],
+                data: values,
+                backgroundColor: COLORS,
               },
             ],
           }}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-          }}
+          options={commonOptions}
         />
       </div>
     );

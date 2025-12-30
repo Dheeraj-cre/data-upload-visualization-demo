@@ -1,86 +1,123 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FileUpload from "./components/FileUpload";
 import ChartView from "./components/ChartView";
 import DataTable from "./components/DataTable";
+import { getColumns } from "./utils/getColumns";
 import "./App.css";
 
 function App() {
-  // DATA STATE
   const [data, setData] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [groupBy, setGroupBy] = useState("");
+  const [metric, setMetric] = useState("");
+  const [docName, setDocName] = useState("");
 
-  // VIEW STATE
-  const [view, setView] = useState("all"); // bar | pie | table | all
+  const initializedRef = useRef(false);
+
+  // Extract columns once per upload
+  useEffect(() => {
+    if (!data.length || initializedRef.current) return;
+
+    const cols = getColumns(data);
+    setColumns(cols);
+    setGroupBy(cols[0]);
+    setMetric(cols.find((c) => !isNaN(data[0][c])));
+
+    initializedRef.current = true;
+  }, [data]);
+
+  // 🔹 Dynamic width based on data size
+  const tableSpanClass =
+    data.length > 25 ? "wide-full" :
+    data.length > 10 ? "wide" :
+    "";
 
   return (
     <div className="dashboard">
       {/* Sidebar */}
       <aside className="sidebar">
-        <h2 className="logo">Data Visu</h2>
+        <h2 className="logo">Correl</h2>
 
         <div className="upload-card">
-          <div className="upload-icon">☁️</div>
+          <div className="upload-icon"></div>
           <h3>Upload Data</h3>
           <p>Import your data to build custom dashboards.</p>
 
-          <FileUpload onDataLoaded={setData} />
+          <FileUpload
+            onDataLoaded={(newData, fileName) => {
+              initializedRef.current = false;
+              setData(newData);
+
+              // 🔹 Format document name
+              setDocName(
+                fileName
+                  ?.replace(/\.(csv|xlsx)$/i, "")
+                  .replace(/[_-]/g, " ")
+              );
+            }}
+          />
+
+          {columns.length > 0 && (
+            <div className="filter-box">
+              <label>Group By</label>
+              <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}>
+                {columns.map((col) => (
+                  <option key={col} value={col}>
+                    {col}
+                  </option>
+                ))}
+              </select>
+
+              <label>Metric</label>
+              <select value={metric} onChange={(e) => setMetric(e.target.value)}>
+                {columns.map((col) => (
+                  <option key={col} value={col}>
+                    {col}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </aside>
 
       {/* Main */}
       <main className="main">
-        {/* Header */}
         <header className="topbar">
           <h1>Sample Dashboard</h1>
-
-          {/* ACTION BUTTONS */}
-          <div className="actions">
-            <button onClick={() => setView("bar")} title="Bar Chart">
-              📊
-            </button>
-            <button onClick={() => setView("pie")} title="Pie Chart">
-              🕒
-            </button>
-            <button onClick={() => setView("table")} title="Table">
-              📑
-            </button>
-            <button onClick={() => setView("all")} title="Show All">
-              ⚙️
-            </button>
-          </div>
         </header>
 
-        {/* RECORD COUNT */}
         {data.length > 0 && (
-          <p style={{ color: "#64748b", marginBottom: "12px" }}>
-            Total Records: <strong>{data.length}</strong>
-          </p>
+          <div className="grid">
+            <div className="card chart-card">
+              <h3>{metric} by {groupBy}</h3>
+              <ChartView
+                key={`bar-${groupBy}-${metric}`}
+                data={data}
+                groupBy={groupBy}
+                metric={metric}
+                type="bar"
+              />
+            </div>
+
+            {/*  DYNAMIC DATA CARD */}
+            <div className={`card table-card ${tableSpanClass}`}>
+              <h3>{docName || "Dataset"}</h3>
+              <DataTable data={data} />
+            </div>
+
+            <div className="card pie-card wide">
+              <h3>{metric} Distribution</h3>
+              <ChartView
+                key={`pie-${groupBy}-${metric}`}
+                data={data}
+                groupBy={groupBy}
+                metric={metric}
+                type="pie"
+              />
+            </div>
+          </div>
         )}
-
-        {/* Content */}
-       <div className="grid">
-  {(view === "bar" || view === "all") && (
-    <div className="card chart-card">
-      <h3>Sales by Category</h3>
-      <ChartView data={data} type="bar" />
-    </div>
-  )}
-
-  {(view === "table" || view === "all") && (
-    <div className="card table-card">
-      <h3>Sales Data</h3>
-      <DataTable data={data} />
-    </div>
-  )}
-
-  {(view === "pie" || view === "all") && (
-    <div className="card pie-card wide">
-      <h3>Revenue by Region</h3>
-      <ChartView data={data} type="pie" />
-    </div>
-  )}
-</div>
-
-       
       </main>
     </div>
   );
